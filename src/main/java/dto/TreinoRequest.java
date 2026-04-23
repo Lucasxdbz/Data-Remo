@@ -1,4 +1,4 @@
-package com.dataremo.Data_Remo.dto;
+package dto;
 
 import java.time.LocalDate;
 
