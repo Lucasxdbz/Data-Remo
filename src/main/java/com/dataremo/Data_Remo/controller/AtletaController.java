@@ -31,4 +31,17 @@ public class AtletaController {
                 .sorted((a, b) -> Double.compare(b.getPontos(), a.getPontos()))
                 .toList();
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+        String nome = body.get("nome");
+        String senha = body.get("senha");
+
+        Atleta atleta = atletaRepository.findByNome(nome);
+        if (atleta == null || !atleta.getSenha().equals(senha)) {
+            return ResponseEntity.status(401).body("Nome ou senha incorretos.");
+        }
+        return ResponseEntity.ok(atleta);
+    }
+
 }

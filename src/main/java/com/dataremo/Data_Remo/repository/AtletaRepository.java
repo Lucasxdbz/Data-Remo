@@ -7,4 +7,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AtletaRepository extends JpaRepository<Atleta, Long> {
     Atleta findByNome(String nome);
+
+    Atleta findByNomeAndEmail(String nome, String email);
+
 }
+

@@ -128,4 +128,13 @@ public class Atleta {
                 nome, plano.getNome(), idade, modalidade,
                 nivel.getNome(), pontos, totalTreinos);
     }
+
+    private String senha;
+    private String email;
+
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
 }
