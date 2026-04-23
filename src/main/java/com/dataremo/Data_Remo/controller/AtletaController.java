@@ -30,7 +30,12 @@ public class AtletaController {
     public List<Atleta> rankingGeral() {
         return atletaRepository.findAll()
                 .stream()
-                .sorted((a, b) -> Double.compare(b.getPontos(), a.getPontos()))
+                // ordena por pontosTotais desc, tratando null como 0
+                .sorted((a, b) -> {
+                    double pa = a.getPontosTotais() != null ? a.getPontosTotais() : 0.0;
+                    double pb = b.getPontosTotais() != null ? b.getPontosTotais() : 0.0;
+                    return Double.compare(pb, pa); // maior primeiro
+                })
                 .toList();
     }
 

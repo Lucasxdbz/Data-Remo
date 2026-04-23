@@ -20,10 +20,10 @@ public class Main {
                 "SUP", "Condicionamento", Plano.FREE);
 
         // Atleta PLUS — acessa tudo
-        Atleta lucas   = new Atleta("Lucas",   19, 1.75,
+        Atleta lucas = new Atleta("Lucas", 19, 1.75,
                 "Surf", "Performance", Plano.PLUS);
 
-        Atleta ana     = new Atleta("Ana",     25, 1.65,
+        Atleta ana = new Atleta("Ana", 25, 1.65,
                 "Caiaque", "Evolução técnica", Plano.PLUS);
 
         BancoDados.getInstance().salvarAtleta(gabriel);
@@ -37,8 +37,6 @@ public class Main {
 
         // ══════════════════════════════════════════════════
         // CASO 1: Gabriel (FREE) registra um treino
-        // Esperado: apenas relatório diário + aviso de upgrade
-        // Semanal, mensal e ranking bloqueados
         // ══════════════════════════════════════════════════
         System.out.println("\n════════ CASO 1: Gabriel — Plano FREE ════════\n");
 
@@ -49,8 +47,6 @@ public class Main {
 
         // ══════════════════════════════════════════════════
         // CASO 2: Lucas (PLUS) registra 3 treinos no mês
-        // Esperado: relatório diário + semanal + mensal + ranking
-        // Comparação completa e posição no ranking exibida
         // ══════════════════════════════════════════════════
         System.out.println("\n════════ CASO 2: Lucas — Plano PLUS ════════\n");
 

@@ -1,6 +1,6 @@
 package com.dataremo.Data_Remo.service;
 
-import dto.TreinoRequest;
+import com.dataremo.Data_Remo.dto.TreinoRequest;
 import com.dataremo.Data_Remo.model.Atleta;
 import com.dataremo.Data_Remo.model.Nivel;
 import com.dataremo.Data_Remo.model.Treino;

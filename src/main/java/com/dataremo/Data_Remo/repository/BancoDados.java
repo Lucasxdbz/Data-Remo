@@ -28,7 +28,7 @@ public class BancoDados {
     public List<Remada> getRemadasPorAtleta(String nome) {
         List<Remada> resultado = new ArrayList<>();
         for (Remada r : remadas) {
-            // evita NullPointerException se r.getAtleta() for null
+            // aqui r.getAtleta() provavelmente é um String (nome)
             if (nome.equals(r.getAtleta())) {
                 resultado.add(r);
             }
@@ -61,7 +61,11 @@ public class BancoDados {
 
     public List<Atleta> getRankingGeral() {
         List<Atleta> ranking = new ArrayList<>(atletas);
-        ranking.sort((a, b) -> Double.compare(b.getPontos(), a.getPontos()));
+        ranking.sort((a, b) -> {
+            double pa = a.getPontosTotais() != null ? a.getPontosTotais() : 0.0;
+            double pb = b.getPontosTotais() != null ? b.getPontosTotais() : 0.0;
+            return Double.compare(pb, pa); // maior primeiro
+        });
         return ranking;
     }
 
@@ -72,7 +76,11 @@ public class BancoDados {
                 ranking.add(a);
             }
         }
-        ranking.sort((a, b) -> Double.compare(b.getPontos(), a.getPontos()));
+        ranking.sort((a, b) -> {
+            double pa = a.getPontosTotais() != null ? a.getPontosTotais() : 0.0;
+            double pb = b.getPontosTotais() != null ? b.getPontosTotais() : 0.0;
+            return Double.compare(pb, pa);
+        });
         return ranking;
     }
 

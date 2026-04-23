@@ -9,13 +9,18 @@ public class RelatorioDiario implements RelatorioAnalise {
     @Override
     public void gerar(Remada remada, Atleta atleta) {
 
+        // historico de remadas usando o nome do atleta
         List<Remada> historico = BancoDados.getInstance()
                 .getRemadasPorAtleta(atleta.getNome());
 
         System.out.println("\n╔══════════════════════════════════════════════╗");
         System.out.println("║         RELATÓRIO DIÁRIO                     ║");
         System.out.printf ("║  Atleta : %-35s║%n", atleta.getNome());
-        System.out.printf ("║  Plano  : %-35s║%n", atleta.getPlano().getNome());
+
+        // se plano hoje é String, usamos direto
+        System.out.printf ("║  Plano  : %-35s║%n", atleta.getPlano());
+
+        // nível vem do enum Nivel
         System.out.printf ("║  Nível  : %-35s║%n", atleta.getNivel().getNome());
         System.out.println("╚══════════════════════════════════════════════╝");
 
@@ -25,7 +30,7 @@ public class RelatorioDiario implements RelatorioAnalise {
         System.out.println("  Duração     : " + remada.getDuracao() + " min");
         System.out.println("  Intensidade : " + remada.getIntensidade() + "/10");
         System.out.printf ("  Pontos      : %.0fmin ÷ %d = +%.1f pts%n",
-                (double)remada.getDuracao(),
+                (double) remada.getDuracao(),
                 remada.getIntensidade(),
                 remada.calcularPontos());
         System.out.println("  Observações : " + remada.getComentarios());
@@ -41,13 +46,13 @@ public class RelatorioDiario implements RelatorioAnalise {
 
         // Variação do dia vs média histórica
         if (historico.size() > 1) {
-            double mediaPontos    = historico.stream()
+            double mediaPontos = historico.stream()
                     .mapToDouble(Remada::calcularPontos).average().orElse(0);
-            double mediaInt       = historico.stream()
+            double mediaInt = historico.stream()
                     .mapToInt(Remada::getIntensidade).average().orElse(0);
-            double mediaDur       = historico.stream()
+            double mediaDur = historico.stream()
                     .mapToInt(Remada::getDuracao).average().orElse(0);
-            double variacaoDia    = ((remada.calcularPontos() - mediaPontos)
+            double variacaoDia = ((remada.calcularPontos() - mediaPontos)
                     / mediaPontos) * 100;
 
             System.out.println("\n┌─ ANÁLISE DO DIA ─┐");
@@ -80,31 +85,39 @@ public class RelatorioDiario implements RelatorioAnalise {
 
     // Barra visual proporcional aos pontos
     protected String gerarBarra(double pontos) {
-        int tamanho = Math.min((int)(pontos / 1.5), 22);
+        int tamanho = Math.min((int) (pontos / 1.5), 22);
         return "█".repeat(Math.max(tamanho, 1));
     }
 
-    // Progresso para o próximo nível — disponível em todos os planos
+    // Progresso para o próximo nível — usando os novos campos de Atleta
     protected void exibirProgressoNivel(Atleta atleta) {
         Nivel[] niveis = Nivel.values();
         int indice = atleta.getNivel().ordinal();
 
         if (indice < niveis.length - 1) {
             Nivel proximo = niveis[indice + 1];
-            double ptRestantes   = Math.max(0, proximo.getPontosParaSubir() - atleta.getPontos());
-            int treinosRestantes = Math.max(0, proximo.getTreinosMinimos() - atleta.getTotalTreinos());
-            int tempoRestante    = Math.max(0, proximo.getTempoMinimoAcum() - atleta.getTempoAcumulado());
+
+            double pontosAtuais = atleta.getPontosTotais() != null ? atleta.getPontosTotais() : 0.0;
+            int treinosAtuais = atleta.getTotalTreinos() != null ? atleta.getTotalTreinos() : 0;
+            int tempoAtual = atleta.getTempoTotalMinutos() != null ? atleta.getTempoTotalMinutos() : 0;
+
+            double ptRestantes = Math.max(0, proximo.getPontosParaSubir() - pontosAtuais);
+            int treinosRestantes = Math.max(0, proximo.getTreinosMinimos() - treinosAtuais);
+            int tempoRestante = Math.max(0, proximo.getTempoMinimoAcum() - tempoAtual);
 
             System.out.println("\n┌─ PRÓXIMO NÍVEL: " + proximo.getNome() + " ─┐");
             System.out.printf ("  Pontos restantes         : %.1f pts%n", ptRestantes);
             System.out.println("  Treinos restantes        : " + treinosRestantes);
             System.out.println("  Tempo restante           : " + tempoRestante + " min");
 
-            int prog = (int)((atleta.getPontos() * 20.0) / proximo.getPontosParaSubir());
-            prog = Math.min(prog, 20);
+            int prog = proximo.getPontosParaSubir() > 0
+                    ? (int) ((pontosAtuais * 20.0) / proximo.getPontosParaSubir())
+                    : 0;
+            prog = Math.min(Math.max(prog, 0), 20);
+
             String barraP = "█".repeat(prog) + "░".repeat(20 - prog);
             System.out.printf("  Progresso                : [%s] %.1f/%d%n",
-                    barraP, atleta.getPontos(), proximo.getPontosParaSubir());
+                    barraP, pontosAtuais, proximo.getPontosParaSubir());
         } else {
             System.out.println("\n  👑 NÍVEL MÁXIMO — " + atleta.getNivel().getNome());
         }

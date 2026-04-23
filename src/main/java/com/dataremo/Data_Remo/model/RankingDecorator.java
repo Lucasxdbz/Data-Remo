@@ -23,9 +23,12 @@ public class RankingDecorator extends RelatorioDecorator {
         int pos = 1;
         for (Atleta a : rankingGeral) {
             String marcador = a.getNome().equals(atleta.getNome()) ? " ← você" : "";
+
+            double pontosA = a.getPontosTotais() != null ? a.getPontosTotais() : 0.0;
+
             System.out.printf("  %dº %-10s | %-15s | %.1f pts%s%n",
                     pos++, a.getNome(), a.getNivel().getNome(),
-                    a.getPontos(), marcador);
+                    pontosA, marcador);
         }
 
         System.out.println("\n┌─ RANKING — " + atleta.getNivel().getNome() + " ─┐");
@@ -34,8 +37,11 @@ public class RankingDecorator extends RelatorioDecorator {
         pos = 1;
         for (Atleta a : rankingNivel) {
             String marcador = a.getNome().equals(atleta.getNome()) ? " ← você" : "";
+
+            double pontosA = a.getPontosTotais() != null ? a.getPontosTotais() : 0.0;
+
             System.out.printf("  %dº %-10s | %.1f pts%s%n",
-                    pos++, a.getNome(), a.getPontos(), marcador);
+                    pos++, a.getNome(), pontosA, marcador);
         }
     }
 }

@@ -27,14 +27,20 @@ public class RegistroManual extends RegistroRemada {
     @Override
     protected void processar(Remada remada, Atleta atleta) {
         double pontos = remada.calcularPontos();
+
+        // Atualiza estatísticas do atleta
         atleta.incrementarTreinos();
         atleta.adicionarTempo(remada.getDuracao());
         atleta.adicionarPontos(pontos);
+
+        // Usa getPontosTotais(), não mais getPontos()
+        double totalPontos = atleta.getPontosTotais() != null ? atleta.getPontosTotais() : 0.0;
+
         System.out.printf("[PONTOS] +%.1f pts para %s (%.0fmin / %d) | Total: %.1f%n",
                 pontos, atleta.getNome(),
-                (double)remada.getDuracao(),
+                (double) remada.getDuracao(),
                 remada.getIntensidade(),
-                atleta.getPontos());
+                totalPontos);
     }
 
     @Override

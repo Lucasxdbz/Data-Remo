@@ -1,6 +1,6 @@
 package com.dataremo.Data_Remo.controller;
 
-import dto.TreinoRequest;
+import com.dataremo.Data_Remo.dto.TreinoRequest;
 import com.dataremo.Data_Remo.model.Treino;
 import com.dataremo.Data_Remo.service.TreinoService;
 import org.springframework.http.ResponseEntity;
