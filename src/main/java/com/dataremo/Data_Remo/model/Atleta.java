@@ -8,7 +8,6 @@ import java.util.List;
 @Table(name = "atletas")
 public class Atleta {
 
-    // ID gerado automaticamente pelo banco
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,12 +17,12 @@ public class Atleta {
     private double altura;
     private String modalidade;
     private String objetivo;
+    private String email;
+    private String senha;
 
-    // Enum salvo como texto no banco ex: "FREE" ou "PLUS"
     @Enumerated(EnumType.STRING)
     private Plano plano;
 
-    // Enum salvo como texto no banco ex: "INICIANTE_1"
     @Enumerated(EnumType.STRING)
     private Nivel nivel;
 
@@ -31,7 +30,6 @@ public class Atleta {
     private int tempoAcumulado;
     private int totalTreinos;
 
-    // Lista de strings salva como tabela separada no banco
     @ElementCollection
     @CollectionTable(name = "atleta_badges", joinColumns = @JoinColumn(name = "atleta_id"))
     @Column(name = "badge")
@@ -98,27 +96,32 @@ public class Atleta {
 
     public void adicionarBadge(String badge) { badges.add(badge); }
 
-    public Long getId()              { return id; }
-    public String getNome()          { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-    public int getIdade()            { return idade; }
-    public void setIdade(int idade)  { this.idade = idade; }
-    public double getAltura()        { return altura; }
-    public void setAltura(double altura) { this.altura = altura; }
-    public String getModalidade()    { return modalidade; }
-    public void setModalidade(String m) { this.modalidade = m; }
-    public String getObjetivo()      { return objetivo; }
-    public void setObjetivo(String objetivo) { this.objetivo = objetivo; }
-    public Plano getPlano()          { return plano; }
-    public void setPlano(Plano plano) { this.plano = plano; }
-    public Nivel getNivel()          { return nivel; }
-    public void setNivel(Nivel nivel) { this.nivel = nivel; }
-    public double getPontos()        { return pontos; }
-    public void setPontos(double pontos) { this.pontos = pontos; }
-    public int getTempoAcumulado()   { return tempoAcumulado; }
-    public int getTotalTreinos()     { return totalTreinos; }
-    public List<String> getBadges()  { return badges; }
-    public void setBadges(List<String> badges) { this.badges = badges; }
+    // Getters e Setters
+    public Long getId()                      { return id; }
+    public String getNome()                  { return nome; }
+    public void setNome(String nome)         { this.nome = nome; }
+    public int getIdade()                    { return idade; }
+    public void setIdade(int idade)          { this.idade = idade; }
+    public double getAltura()                { return altura; }
+    public void setAltura(double altura)     { this.altura = altura; }
+    public String getModalidade()            { return modalidade; }
+    public void setModalidade(String m)      { this.modalidade = m; }
+    public String getObjetivo()              { return objetivo; }
+    public void setObjetivo(String o)        { this.objetivo = o; }
+    public String getEmail()                 { return email; }
+    public void setEmail(String email)       { this.email = email; }
+    public String getSenha()                 { return senha; }
+    public void setSenha(String senha)       { this.senha = senha; }
+    public Plano getPlano()                  { return plano; }
+    public void setPlano(Plano plano)        { this.plano = plano; }
+    public Nivel getNivel()                  { return nivel; }
+    public void setNivel(Nivel nivel)        { this.nivel = nivel; }
+    public double getPontos()                { return pontos; }
+    public void setPontos(double pontos)     { this.pontos = pontos; }
+    public int getTempoAcumulado()           { return tempoAcumulado; }
+    public int getTotalTreinos()             { return totalTreinos; }
+    public List<String> getBadges()          { return badges; }
+    public void setBadges(List<String> b)    { this.badges = b; }
 
     @Override
     public String toString() {
@@ -128,13 +131,4 @@ public class Atleta {
                 nome, plano.getNome(), idade, modalidade,
                 nivel.getNome(), pontos, totalTreinos);
     }
-
-    private String senha;
-    private String email;
-
-    public String getSenha() { return senha; }
-    public void setSenha(String senha) { this.senha = senha; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
 }
