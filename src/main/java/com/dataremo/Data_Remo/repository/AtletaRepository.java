@@ -13,6 +13,8 @@ public interface AtletaRepository extends JpaRepository<Atleta, Long> {
 
     Atleta findByNomeAndEmail(String nome, String email);
 
+    Atleta findByEmail(String email);
+
     // usado pelo ranking geral
     List<Atleta> findAllByOrderByPontosTotaisDesc();
 }

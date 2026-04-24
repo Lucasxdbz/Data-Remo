@@ -19,11 +19,13 @@ public class AtletaController {
     @Autowired
     private AtletaRepository atletaRepository;
 
+    // lista todos os atletas (usado na recuperação de senha e testes)
     @GetMapping
     public List<Atleta> listar() {
         return atletaRepository.findAll();
     }
 
+    // cadastro
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody Atleta atleta) {
 
@@ -32,6 +34,18 @@ public class AtletaController {
                 || atleta.getEmail() == null || atleta.getEmail().isBlank()
                 || atleta.getSenha() == null || atleta.getSenha().isBlank()) {
             return ResponseEntity.badRequest().body("Nome, email e senha são obrigatórios.");
+        }
+
+        // checa duplicidade de nome
+        Atleta existentePorNome = atletaRepository.findByNome(atleta.getNome());
+        if (existentePorNome != null) {
+            return ResponseEntity.status(409).body("Nome já está em uso.");
+        }
+
+        // checa duplicidade de email
+        Atleta existentePorEmail = atletaRepository.findByEmail(atleta.getEmail());
+        if (existentePorEmail != null) {
+            return ResponseEntity.status(409).body("Email já está em uso.");
         }
 
         // valores padrão (evitar null em colunas NOT NULL)
@@ -44,24 +58,26 @@ public class AtletaController {
             Atleta salvo = atletaRepository.save(atleta);
             return ResponseEntity.ok(salvo);
         } catch (DataIntegrityViolationException e) {
-            // duplicidade de email/nome ou violação de constraint
+            // algum índice/constraint do banco (ex: unique em email) ainda estourou
+            e.printStackTrace();
             return ResponseEntity.status(409)
-                    .body("Nome ou email já estão em uso, ou dados inválidos.");
+                    .body("Dados inválidos ou duplicados no banco.");
         } catch (Exception e) {
-            e.printStackTrace(); // loga no console
+            e.printStackTrace();
             return ResponseEntity.status(500).body("Erro ao criar atleta.");
         }
     }
 
+    // ranking geral (ordenado por pontos)
     @GetMapping("/ranking")
     public List<Atleta> rankingGeral() {
-        // ordena no banco e filtra só quem tem pontos > 0
         return atletaRepository.findAllByOrderByPontosTotaisDesc()
                 .stream()
                 .filter(a -> a.getPontosTotais() != null && a.getPontosTotais() > 0)
                 .toList();
     }
 
+    // login por nome + senha
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         String nome = body.get("nome");
