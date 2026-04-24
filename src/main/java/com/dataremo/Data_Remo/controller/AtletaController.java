@@ -1,8 +1,10 @@
 package com.dataremo.Data_Remo.controller;
 
 import com.dataremo.Data_Remo.model.Atleta;
+import com.dataremo.Data_Remo.model.Nivel;
 import com.dataremo.Data_Remo.repository.AtletaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/atletas")
+@CrossOrigin
 public class AtletaController {
 
     @Autowired
@@ -22,20 +25,40 @@ public class AtletaController {
     }
 
     @PostMapping
-    public Atleta criar(@RequestBody Atleta atleta) {
-        return atletaRepository.save(atleta);
+    public ResponseEntity<?> criar(@RequestBody Atleta atleta) {
+
+        // validações básicas
+        if (atleta.getNome() == null || atleta.getNome().isBlank()
+                || atleta.getEmail() == null || atleta.getEmail().isBlank()
+                || atleta.getSenha() == null || atleta.getSenha().isBlank()) {
+            return ResponseEntity.badRequest().body("Nome, email e senha são obrigatórios.");
+        }
+
+        // valores padrão (evitar null em colunas NOT NULL)
+        if (atleta.getPontosTotais() == null) atleta.setPontosTotais(0.0);
+        if (atleta.getTotalTreinos() == null) atleta.setTotalTreinos(0);
+        if (atleta.getTempoTotalMinutos() == null) atleta.setTempoTotalMinutos(0);
+        if (atleta.getNivel() == null) atleta.setNivel(Nivel.INICIANTE_1);
+
+        try {
+            Atleta salvo = atletaRepository.save(atleta);
+            return ResponseEntity.ok(salvo);
+        } catch (DataIntegrityViolationException e) {
+            // duplicidade de email/nome ou violação de constraint
+            return ResponseEntity.status(409)
+                    .body("Nome ou email já estão em uso, ou dados inválidos.");
+        } catch (Exception e) {
+            e.printStackTrace(); // loga no console
+            return ResponseEntity.status(500).body("Erro ao criar atleta.");
+        }
     }
 
     @GetMapping("/ranking")
     public List<Atleta> rankingGeral() {
-        return atletaRepository.findAll()
+        // ordena no banco e filtra só quem tem pontos > 0
+        return atletaRepository.findAllByOrderByPontosTotaisDesc()
                 .stream()
-                // ordena por pontosTotais desc, tratando null como 0
-                .sorted((a, b) -> {
-                    double pa = a.getPontosTotais() != null ? a.getPontosTotais() : 0.0;
-                    double pb = b.getPontosTotais() != null ? b.getPontosTotais() : 0.0;
-                    return Double.compare(pb, pa); // maior primeiro
-                })
+                .filter(a -> a.getPontosTotais() != null && a.getPontosTotais() > 0)
                 .toList();
     }
 
